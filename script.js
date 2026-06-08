@@ -91,6 +91,11 @@ const documentTypes = [
 
 // Utility to fill select inputs using arrays.
 function populateSelect(selectElement, options) {
+  const blankOption = document.createElement("option");
+  blankOption.value = "";
+  blankOption.textContent = "— leave blank —";
+  selectElement.appendChild(blankOption);
+
   options.forEach(option => {
     const optionElement = document.createElement("option");
     optionElement.value = option;
@@ -124,6 +129,7 @@ function getFormValues() {
     classSize: formData.get("classSize") || "",
     courseModality: formData.get("courseModality") || "",
     activityType: formData.get("activityType") || "",
+    activityTypeOther: formData.get("activityTypeOther") || "",
     strategy: formData.get("strategy") || "",
     timeAvailable: formData.get("timeAvailable") || "",
     learningGoals: formData.get("learningGoals") || "",
@@ -136,6 +142,10 @@ function getFormValues() {
 }
 
 function buildTemplate(data) {
+  const chosenActivityType = data.activityType === "Other"
+    ? data.activityTypeOther
+    : data.activityType;
+
   const existingAssignmentSection = data.existingAssignment === "Yes"
     ? `This redesign is based on an existing assignment. The instructor wants to ${data.redesignStyle.toLowerCase()} and the desired level of effort is ${data.redesignEffort.toLowerCase()}.`
     : "This is not based on an existing assignment.";
@@ -150,7 +160,7 @@ Course discipline: ${data.discipline}
 Course level: ${data.courseLevel}
 Class size: ${data.classSize}
 Course modality: ${data.courseModality}
-Assignment or activity type: ${data.activityType}
+Assignment or activity type: ${chosenActivityType}
 Chosen active learning strategy: ${data.strategy}
 Time available: ${data.timeAvailable}
 Learning goals: ${data.learningGoals}
@@ -210,7 +220,7 @@ function copyPrompt() {
 function updateRedesignVisibility() {
   const existingAssignment = document.getElementById("existing-assignment").value;
   const redesignGroup = document.getElementById("redesign-group");
-  redesignGroup.classList.toggle("hidden", existingAssignment === "No");
+  redesignGroup.classList.toggle("hidden", existingAssignment !== "Yes");
 }
 
 function initializeSpecificApp() {
@@ -227,6 +237,11 @@ function initializeSpecificApp() {
   populateSelect(document.getElementById("redesign-style"), redesignStyles);
   populateSelect(document.getElementById("redesign-effort"), redesignEfforts);
 
+  const activityTypeSelect = document.getElementById("activity-type");
+  if (activityTypeSelect) {
+    activityTypeSelect.addEventListener("change", updateActivityTypeOtherVisibility);
+  }
+
   const documentTypesContainer = document.getElementById("document-types");
   documentTypes.forEach(type => documentTypesContainer.appendChild(createDocumentTypeCheckbox(type)));
 
@@ -235,9 +250,18 @@ function initializeSpecificApp() {
   document.getElementById("copy-button").addEventListener("click", copyPrompt);
 
   updateRedesignVisibility();
+  updateActivityTypeOtherVisibility();
   // Initialize the explanation text (if present)
   if (typeof updateStrategyExplanation === 'function') updateStrategyExplanation();
 }
+
+function updateActivityTypeOtherVisibility() {
+  const activityType = document.getElementById("activity-type")?.value;
+  const group = document.getElementById("activity-type-other-group");
+  if (!group) return;
+  group.classList.toggle("hidden", activityType !== "Other");
+}
+
 
 function updateStrategyExplanation() {
   const sel = document.getElementById("strategy");

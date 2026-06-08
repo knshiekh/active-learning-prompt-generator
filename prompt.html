@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Active Learning Prompt Builder</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <p><a href="index.html">← Choose mode</a></p>
+      <h1>Active Learning Prompt Builder</h1>
+      <p>Fill in the teaching details below and generate a model-agnostic prompt for any LLM.</p>
+    </header>
+
+    <form id="prompt-form" class="form-grid">
+      <label for="discipline">Discipline</label>
+      <input id="discipline" name="discipline" type="text" placeholder="e.g. Biology, Literature" required />
+
+      <label for="course-level">Course level</label>
+      <select id="course-level" name="courseLevel"></select>
+
+      <label for="class-size">Class size</label>
+      <select id="class-size" name="classSize"></select>
+
+      <label for="course-modality">Course modality</label>
+      <select id="course-modality" name="courseModality"></select>
+
+      <label for="activity-type">Assignment or activity type</label>
+      <select id="activity-type" name="activityType"></select>
+
+      <div id="activity-type-other-group" class="conditional hidden">
+        <label for="activity-type-other">If you chose Other, describe it here</label>
+        <input id="activity-type-other" name="activityTypeOther" type="text" placeholder="Enter your own activity type" />
+      </div>
+
+      <label for="strategy">Active learning strategy</label>
+      <select id="strategy" name="strategy"></select>
+      <p id="strategy-explanation" class="note full-span" aria-live="polite"></p>
+
+      <label for="time-available">Time available</label>
+      <input id="time-available" name="timeAvailable" type="text" placeholder="e.g. 15 minutes, 1 class session" required />
+
+      <label for="learning-goals">Learning goals</label>
+      <textarea id="learning-goals" name="learningGoals" rows="3" placeholder="Describe the learning goals" required></textarea>
+
+      <label for="existing-assignment">Based on an existing assignment?</label>
+      <select id="existing-assignment" name="existingAssignment">
+        <option value=""></option>
+        <option value="No">No</option>
+        <option value="Yes">Yes</option>
+      </select>
+
+      <div id="redesign-group" class="conditional hidden">
+        <label for="redesign-style">How should the assignment change?</label>
+        <select id="redesign-style" name="redesignStyle"></select>
+      </div>
+
+      <label for="redesign-effort">Desired level of redesign effort</label>
+      <select id="redesign-effort" name="redesignEffort"></select>
+
+      <label for="upload-documents">Will you upload documents later?</label>
+      <select id="upload-documents" name="uploadDocuments">
+        <option value=""></option>
+        <option value="No">No</option>
+        <option value="Yes">Yes</option>
+      </select>
+
+      <fieldset class="document-types">
+        <legend>Types of documents you may upload later</legend>
+        <div id="document-types"></div>
+      </fieldset>
+    </form>
+
+    <div class="actions">
+      <button id="generate-button" type="button">Generate Prompt</button>
+      <button id="copy-button" type="button" disabled>Copy Prompt</button>
+    </div>
+
+    <section class="output-panel">
+      <h2>Generated Prompt</h2>
+      <p class="note">This prompt is ready for any LLM. Use the copy button to paste it into ChatGPT, Claude, Gemini, Copilot, or another model.</p>
+      <textarea id="generated-prompt" rows="16" readonly placeholder="Your prompt will appear here after generation."></textarea>
+    </section>
+
+    <section class="help-text">
+      <h3>How this works</h3>
+      <p>The app uses a structured template to create a clear LLM prompt based on your course context. It does not require a backend or API. A placeholder function is included for later LLM polishing or rewriting.</p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

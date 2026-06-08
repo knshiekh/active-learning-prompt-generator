@@ -3,86 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Active Learning Prompt Builder</title>
+  <title>Start - Active Learning Prompt Builder</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="container">
     <header>
-      <p><a href="start.html">← Choose mode</a></p>
       <h1>Active Learning Prompt Builder</h1>
-      <p>Fill in the teaching details below and generate a model-agnostic prompt for any LLM.</p>
+      <p>Choose how you'd like to proceed.</p>
     </header>
 
-    <form id="prompt-form" class="form-grid">
-      <label for="discipline">Discipline</label>
-      <input id="discipline" name="discipline" type="text" placeholder="e.g. Biology, Literature" required />
-
-      <label for="course-level">Course level</label>
-      <select id="course-level" name="courseLevel" required></select>
-
-      <label for="class-size">Class size</label>
-      <select id="class-size" name="classSize" required></select>
-
-      <label for="course-modality">Course modality</label>
-      <select id="course-modality" name="courseModality" required></select>
-
-      <label for="activity-type">Assignment or activity type</label>
-      <select id="activity-type" name="activityType" required></select>
-
-      <label for="strategy">Active learning strategy</label>
-      <select id="strategy" name="strategy" required></select>
-      <p id="strategy-explanation" class="note full-span" aria-live="polite"></p>
-
-      <label for="time-available">Time available</label>
-      <input id="time-available" name="timeAvailable" type="text" placeholder="e.g. 15 minutes, 1 class session" required />
-
-      <label for="learning-goals">Learning goals</label>
-      <textarea id="learning-goals" name="learningGoals" rows="3" placeholder="Describe the learning goals" required></textarea>
-
-      <label for="existing-assignment">Based on an existing assignment?</label>
-      <select id="existing-assignment" name="existingAssignment" required>
-        <option value="No">No</option>
-        <option value="Yes">Yes</option>
-      </select>
-
-      <div id="redesign-group" class="conditional hidden">
-        <label for="redesign-style">How should the assignment change?</label>
-        <select id="redesign-style" name="redesignStyle"></select>
+    <section class="form-grid" style="text-align:center; gap:20px;">
+      <div>
+        <h2>I'm getting started</h2>
+        <p class="note">I have a course but I'm not sure how or where to add active learning.</p>
+        <a href="abstract.html"><button id="start-abstract">Get suggestions from an LLM prompt</button></a>
       </div>
 
-      <label for="redesign-effort">Desired level of redesign effort</label>
-      <select id="redesign-effort" name="redesignEffort" required></select>
-
-      <label for="upload-documents">Will you upload documents later?</label>
-      <select id="upload-documents" name="uploadDocuments" required>
-        <option value="No">No</option>
-        <option value="Yes">Yes</option>
-      </select>
-
-      <fieldset class="document-types">
-        <legend>Types of documents you may upload later</legend>
-        <div id="document-types"></div>
-      </fieldset>
-    </form>
-
-    <div class="actions">
-      <button id="generate-button" type="button">Generate Prompt</button>
-      <button id="copy-button" type="button" disabled>Copy Prompt</button>
-    </div>
-
-    <section class="output-panel">
-      <h2>Generated Prompt</h2>
-      <p class="note">This prompt is ready for any LLM. Use the copy button to paste it into ChatGPT, Claude, Gemini, Copilot, or another model.</p>
-      <textarea id="generated-prompt" rows="16" readonly placeholder="Your prompt will appear here after generation."></textarea>
+      <div>
+        <h2>I have specifics</h2>
+        <p class="note">I know the week, topic, or a specific activity I want to redesign.</p>
+        <a href="prompt.html"><button id="start-specific">Go to detailed prompt builder</button></a>
+      </div>
     </section>
 
-    <section class="help-text">
-      <h3>How this works</h3>
-      <p>The app uses a structured template to create a clear LLM prompt based on your course context. It does not require a backend or API. A placeholder function is included for later LLM polishing or rewriting.</p>
+    <section class="help-text" style="margin-top:18px;">
+      <p class="note">The "getting started" option generates a short LLM prompt you can paste into ChatGPT or another model to get actionable suggestions. The "specifics" option opens the detailed builder for creating a ready-to-use prompt.</p>
     </section>
   </main>
-
-  <script src="script.js"></script>
 </body>
 </html>
