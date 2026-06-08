@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Abstract Mode - Active Learning Prompt Builder</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <p><a href="start.html">← Choose mode</a></p>
+      <h1>Suggest Active Learning Options</h1>
+      <p>Provide a few high-level course details and generate a prompt to paste into an LLM for suggestions.</p>
+    </header>
+
+    <form id="abstract-form" class="form-grid">
+      <label for="a-discipline">Discipline</label>
+      <input id="a-discipline" name="discipline" type="text" placeholder="e.g. Biology, Literature" />
+
+      <label for="a-course-level">Course level</label>
+      <select id="a-course-level" name="courseLevel"></select>
+
+      <label for="a-class-size">Class size</label>
+      <select id="a-class-size" name="classSize"></select>
+
+      <label for="a-course-modality">Course modality</label>
+      <select id="a-course-modality" name="courseModality"></select>
+
+      <label for="a-time-available">Typical class time available</label>
+      <input id="a-time-available" name="timeAvailable" type="text" placeholder="e.g. 10-15 minutes, 1 session" />
+
+      <label for="a-learning-goals">Typical learning goals</label>
+      <textarea id="a-learning-goals" name="learningGoals" rows="3" placeholder="Describe the learning goals"></textarea>
+    </form>
+
+    <div class="actions">
+      <button id="generate-abstract-button" type="button">Generate LLM Prompt</button>
+      <button id="copy-abstract-button" type="button" disabled>Copy Prompt</button>
+    </div>
+
+    <section class="output-panel">
+      <h2>LLM Prompt</h2>
+      <p class="note">Paste this prompt into ChatGPT or another model to get high-level suggestions.</p>
+      <textarea id="generated-abstract-prompt" rows="12" readonly placeholder="Your LLM prompt will appear here after generation."></textarea>
+    </section>
+
+    <section class="help-text">
+      <p class="note">This abstract prompt asks the model for several concrete active-learning suggestions tailored to your course context, plus example student instructions and quick implementation notes.</p>
+    </section>
+
+    <script src="script.js"></script>
+  </main>
+</body>
+</html>
