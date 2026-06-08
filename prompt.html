@@ -38,6 +38,12 @@
 
       <label for="strategy">Active learning strategy</label>
       <select id="strategy" name="strategy"></select>
+
+      <div id="strategy-other-group" class="conditional hidden full-span">
+        <label for="strategy-other">If you chose Other, describe it here</label>
+        <input id="strategy-other" name="strategyOther" type="text" placeholder="Enter your own active learning strategy" />
+      </div>
+
       <p id="strategy-explanation" class="note full-span" aria-live="polite"></p>
 
       <label for="time-available">Time available</label>
@@ -48,7 +54,7 @@
 
       <label for="existing-assignment">Based on an existing assignment?</label>
       <select id="existing-assignment" name="existingAssignment">
-        <option value=""></option>
+        <option value="">select option</option>
         <option value="No">No</option>
         <option value="Yes">Yes</option>
       </select>
@@ -63,7 +69,7 @@
 
       <label for="upload-documents">Will you upload documents later?</label>
       <select id="upload-documents" name="uploadDocuments">
-        <option value=""></option>
+        <option value="">select option</option>
         <option value="No">No</option>
         <option value="Yes">Yes</option>
       </select>

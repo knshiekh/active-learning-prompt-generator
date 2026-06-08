@@ -139,6 +139,7 @@ function getFormValues() {
     activityType: formData.get("activityType") || "",
     activityTypeOther: formData.get("activityTypeOther") || "",
     strategy: formData.get("strategy") || "",
+    strategyOther: formData.get("strategyOther") || "",
     timeAvailable: formData.get("timeAvailable") || "",
     learningGoals: formData.get("learningGoals") || "",
     existingAssignment: formData.get("existingAssignment") || "",
@@ -153,6 +154,10 @@ function buildTemplate(data) {
   const chosenActivityType = data.activityType === "Other"
     ? data.activityTypeOther
     : data.activityType;
+
+  const chosenStrategy = data.strategy === "Other"
+    ? data.strategyOther
+    : data.strategy;
 
   const existingAssignmentSection = data.existingAssignment === "Yes"
     ? `This redesign is based on an existing assignment.${data.redesignStyle ? ` The instructor wants to ${data.redesignStyle.toLowerCase()}` : ""}${data.redesignEffort ? ` and the desired level of effort is ${data.redesignEffort.toLowerCase()}` : ""}.`
@@ -173,7 +178,7 @@ Course level: ${data.courseLevel}
 Class size: ${data.classSize}
 Course modality: ${data.courseModality}
 Assignment or activity type: ${chosenActivityType}
-Chosen active learning strategy: ${data.strategy}
+Chosen active learning strategy: ${chosenStrategy}
 Time available: ${data.timeAvailable}
 Learning goals: ${data.learningGoals}
 ${existingAssignmentSection}
@@ -236,18 +241,19 @@ function updateRedesignVisibility() {
 }
 
 function initializeSpecificApp() {
-  populateSelect(document.getElementById("course-level"), courseLevels, "Course level");
-  populateSelect(document.getElementById("class-size"), classSizes, "Class size");
-  populateSelect(document.getElementById("course-modality"), courseModalities, "Course modality");
-  populateSelect(document.getElementById("activity-type"), activityTypes, "Assignment or activity type");
-  populateSelect(document.getElementById("strategy"), activeLearningStrategies, "Active learning strategy");
+  populateSelect(document.getElementById("course-level"), courseLevels, "select option");
+  populateSelect(document.getElementById("class-size"), classSizes, "select option");
+  populateSelect(document.getElementById("course-modality"), courseModalities, "select option");
+  populateSelect(document.getElementById("activity-type"), activityTypes, "select option");
+  populateSelect(document.getElementById("strategy"), activeLearningStrategies, "select option");
   // Wire the strategy explanation element to update when selection changes.
   const strategySelect = document.getElementById("strategy");
   if (strategySelect) {
     strategySelect.addEventListener("change", updateStrategyExplanation);
+    strategySelect.addEventListener("change", updateStrategyOtherVisibility);
   }
-  populateSelect(document.getElementById("redesign-style"), redesignStyles, "How should the assignment change?");
-  populateSelect(document.getElementById("redesign-effort"), redesignEfforts, "Desired level of redesign effort");
+  populateSelect(document.getElementById("redesign-style"), redesignStyles, "select option");
+  populateSelect(document.getElementById("redesign-effort"), redesignEfforts, "select option");
 
   const activityTypeSelect = document.getElementById("activity-type");
   if (activityTypeSelect) {
@@ -264,6 +270,7 @@ function initializeSpecificApp() {
 
   updateRedesignVisibility();
   updateActivityTypeOtherVisibility();
+  updateStrategyOtherVisibility();
   updateModalityDescription();
   // Initialize the explanation text (if present)
   if (typeof updateStrategyExplanation === 'function') updateStrategyExplanation();
@@ -274,6 +281,13 @@ function updateActivityTypeOtherVisibility() {
   const group = document.getElementById("activity-type-other-group");
   if (!group) return;
   group.classList.toggle("hidden", activityType !== "Other");
+}
+
+function updateStrategyOtherVisibility() {
+  const strategy = document.getElementById("strategy")?.value;
+  const group = document.getElementById("strategy-other-group");
+  if (!group) return;
+  group.classList.toggle("hidden", strategy !== "Other");
 }
 
 function updateModalityDescription() {
@@ -346,9 +360,9 @@ function initializeAbstractApp() {
   const aCourseLevel = document.getElementById("a-course-level");
   const aClassSize = document.getElementById("a-class-size");
   const aCourseModality = document.getElementById("a-course-modality");
-  if (aCourseLevel) populateSelect(aCourseLevel, courseLevels, "Course level");
-  if (aClassSize) populateSelect(aClassSize, classSizes, "Class size");
-  if (aCourseModality) populateSelect(aCourseModality, courseModalities, "Course modality");
+  if (aCourseLevel) populateSelect(aCourseLevel, courseLevels, "select option");
+  if (aClassSize) populateSelect(aClassSize, classSizes, "select option");
+  if (aCourseModality) populateSelect(aCourseModality, courseModalities, "select option");
 
   const genButton = document.getElementById("generate-abstract-button");
   const copyButton = document.getElementById("copy-abstract-button");

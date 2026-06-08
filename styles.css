@@ -69,6 +69,11 @@ textarea {
   color: var(--text);
 }
 
+input::placeholder,
+textarea::placeholder {
+  color: #a0aec0;
+}
+
 textarea {
   resize: vertical;
 }
@@ -158,7 +163,7 @@ button:disabled {
 }
 
 select option[value=""] {
-  color: var(--muted);
+  color: #a0aec0;
 }
 
 .output-panel .note {
