@@ -21,6 +21,14 @@ const courseModalities = [
   "HyFlex"
 ];
 
+const modalityDescriptions = {
+  "In-person": "Students attend class together in the same physical space.",
+  "Online synchronous": "Students meet live online at scheduled times, often via video or chat.",
+  "Online asynchronous": "Students complete work on their own schedule without a shared live meeting.",
+  "Hybrid": "A mix of in-person and online learning where some components occur face-to-face and others remotely.",
+  "HyFlex": "Students can choose to participate either in person or online for the same session."
+};
+
 const activityTypes = [
   "Lecture",
   "Homework",
@@ -36,6 +44,7 @@ const activityTypes = [
 ];
 
 const activeLearningStrategies = [
+  "Let the LLM suggest strategies",
   "Think-Pair-Share",
   "Peer instruction",
   "Case study",
@@ -46,8 +55,7 @@ const activeLearningStrategies = [
   "Retrieval practice",
   "Concept mapping",
   "Collaborative writing",
-  "Role-playing or simulation",
-  "Let the LLM suggest strategies"
+  "Role-playing or simulation"
 ];
 
 // One-sentence explanations for each strategy (courteous, instructor-facing).
@@ -90,10 +98,10 @@ const documentTypes = [
 ];
 
 // Utility to fill select inputs using arrays.
-function populateSelect(selectElement, options) {
+function populateSelect(selectElement, options, placeholderText) {
   const blankOption = document.createElement("option");
   blankOption.value = "";
-  blankOption.textContent = "— leave blank —";
+  blankOption.textContent = placeholderText || "";
   selectElement.appendChild(blankOption);
 
   options.forEach(option => {
@@ -133,10 +141,10 @@ function getFormValues() {
     strategy: formData.get("strategy") || "",
     timeAvailable: formData.get("timeAvailable") || "",
     learningGoals: formData.get("learningGoals") || "",
-    existingAssignment: formData.get("existingAssignment") || "No",
+    existingAssignment: formData.get("existingAssignment") || "",
     redesignStyle: formData.get("redesignStyle") || "",
     redesignEffort: formData.get("redesignEffort") || "",
-    uploadDocuments: formData.get("uploadDocuments") || "No",
+    uploadDocuments: formData.get("uploadDocuments") || "",
     documentTypes: getCheckedDocumentTypes()
   };
 }
@@ -147,12 +155,16 @@ function buildTemplate(data) {
     : data.activityType;
 
   const existingAssignmentSection = data.existingAssignment === "Yes"
-    ? `This redesign is based on an existing assignment. The instructor wants to ${data.redesignStyle.toLowerCase()} and the desired level of effort is ${data.redesignEffort.toLowerCase()}.`
-    : "This is not based on an existing assignment.";
+    ? `This redesign is based on an existing assignment.${data.redesignStyle ? ` The instructor wants to ${data.redesignStyle.toLowerCase()}` : ""}${data.redesignEffort ? ` and the desired level of effort is ${data.redesignEffort.toLowerCase()}` : ""}.`
+    : data.existingAssignment === "No"
+      ? "This is not based on an existing assignment."
+      : "It is not specified whether this is based on an existing assignment.";
 
   const uploadSection = data.uploadDocuments === "Yes"
     ? `The instructor may upload supporting documents later, such as: ${data.documentTypes.length > 0 ? data.documentTypes.join(", ") : "related course files"}.`
-    : "No supporting documents are planned for upload at this time.";
+    : data.uploadDocuments === "No"
+      ? "No supporting documents are planned for upload at this time."
+      : "It is not specified whether supporting documents will be uploaded later.";
 
   return `You are an instructional design assistant. Use the course context below to create an active-learning redesign prompt that works with any large language model.
 
@@ -224,18 +236,18 @@ function updateRedesignVisibility() {
 }
 
 function initializeSpecificApp() {
-  populateSelect(document.getElementById("course-level"), courseLevels);
-  populateSelect(document.getElementById("class-size"), classSizes);
-  populateSelect(document.getElementById("course-modality"), courseModalities);
-  populateSelect(document.getElementById("activity-type"), activityTypes);
-  populateSelect(document.getElementById("strategy"), activeLearningStrategies);
+  populateSelect(document.getElementById("course-level"), courseLevels, "Course level");
+  populateSelect(document.getElementById("class-size"), classSizes, "Class size");
+  populateSelect(document.getElementById("course-modality"), courseModalities, "Course modality");
+  populateSelect(document.getElementById("activity-type"), activityTypes, "Assignment or activity type");
+  populateSelect(document.getElementById("strategy"), activeLearningStrategies, "Active learning strategy");
   // Wire the strategy explanation element to update when selection changes.
   const strategySelect = document.getElementById("strategy");
   if (strategySelect) {
     strategySelect.addEventListener("change", updateStrategyExplanation);
   }
-  populateSelect(document.getElementById("redesign-style"), redesignStyles);
-  populateSelect(document.getElementById("redesign-effort"), redesignEfforts);
+  populateSelect(document.getElementById("redesign-style"), redesignStyles, "How should the assignment change?");
+  populateSelect(document.getElementById("redesign-effort"), redesignEfforts, "Desired level of redesign effort");
 
   const activityTypeSelect = document.getElementById("activity-type");
   if (activityTypeSelect) {
@@ -246,11 +258,13 @@ function initializeSpecificApp() {
   documentTypes.forEach(type => documentTypesContainer.appendChild(createDocumentTypeCheckbox(type)));
 
   document.getElementById("existing-assignment").addEventListener("change", updateRedesignVisibility);
+  document.getElementById("course-modality").addEventListener("change", updateModalityDescription);
   document.getElementById("generate-button").addEventListener("click", generatePrompt);
   document.getElementById("copy-button").addEventListener("click", copyPrompt);
 
   updateRedesignVisibility();
   updateActivityTypeOtherVisibility();
+  updateModalityDescription();
   // Initialize the explanation text (if present)
   if (typeof updateStrategyExplanation === 'function') updateStrategyExplanation();
 }
@@ -260,6 +274,13 @@ function updateActivityTypeOtherVisibility() {
   const group = document.getElementById("activity-type-other-group");
   if (!group) return;
   group.classList.toggle("hidden", activityType !== "Other");
+}
+
+function updateModalityDescription() {
+  const modality = document.getElementById("course-modality")?.value;
+  const description = document.getElementById("course-modality-description");
+  if (!description) return;
+  description.textContent = modalityDescriptions[modality] || "";
 }
 
 
@@ -325,9 +346,9 @@ function initializeAbstractApp() {
   const aCourseLevel = document.getElementById("a-course-level");
   const aClassSize = document.getElementById("a-class-size");
   const aCourseModality = document.getElementById("a-course-modality");
-  if (aCourseLevel) populateSelect(aCourseLevel, courseLevels);
-  if (aClassSize) populateSelect(aClassSize, classSizes);
-  if (aCourseModality) populateSelect(aCourseModality, courseModalities);
+  if (aCourseLevel) populateSelect(aCourseLevel, courseLevels, "Course level");
+  if (aClassSize) populateSelect(aClassSize, classSizes, "Class size");
+  if (aCourseModality) populateSelect(aCourseModality, courseModalities, "Course modality");
 
   const genButton = document.getElementById("generate-abstract-button");
   const copyButton = document.getElementById("copy-abstract-button");

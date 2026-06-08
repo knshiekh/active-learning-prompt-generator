@@ -157,6 +157,10 @@ button:disabled {
   background: #f7f9ff;
 }
 
+select option[value=""] {
+  color: var(--muted);
+}
+
 .output-panel .note {
   margin: 8px 0 16px;
   color: var(--muted);
