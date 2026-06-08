@@ -17,8 +17,7 @@ const courseModalities = [
   "In-person",
   "Online synchronous",
   "Online asynchronous",
-  "Hybrid",
-  "HyFlex"
+  "Hybrid"
 ];
 
 const modalityDescriptions = {
@@ -82,12 +81,6 @@ const redesignStyles = [
   "Generate multiple redesign options"
 ];
 
-const redesignEfforts = [
-  "Minimal changes",
-  "Moderate redesign",
-  "Transformative redesign"
-];
-
 const documentTypes = [
   "Syllabus",
   "Existing assignment instructions",
@@ -145,7 +138,6 @@ function getFormValues() {
     learningGoals: formData.get("learningGoals") || "",
     existingAssignment: formData.get("existingAssignment") || "",
     redesignStyle: formData.get("redesignStyle") || "",
-    redesignEffort: formData.get("redesignEffort") || "",
     uploadDocuments: formData.get("uploadDocuments") || "",
     documentTypes: getCheckedDocumentTypes()
   };
@@ -161,7 +153,7 @@ function buildTemplate(data) {
     : data.strategy;
 
   const existingAssignmentSection = data.existingAssignment === "Yes"
-    ? `This redesign is based on an existing assignment.${data.redesignStyle ? ` The instructor wants to ${data.redesignStyle.toLowerCase()}` : ""}${data.redesignEffort ? ` and the desired level of effort is ${data.redesignEffort.toLowerCase()}` : ""}.`
+    ? `This redesign is based on an existing assignment.${data.redesignStyle ? ` The instructor wants to ${data.redesignStyle.toLowerCase()}` : ""}.`
     : data.existingAssignment === "No"
       ? "This is not based on an existing assignment."
       : "";
@@ -258,7 +250,6 @@ function initializeSpecificApp() {
     strategySelect.addEventListener("change", updateStrategyOtherVisibility);
   }
   populateSelect(document.getElementById("redesign-style"), redesignStyles, "select option");
-  populateSelect(document.getElementById("redesign-effort"), redesignEfforts, "select option");
 
   const activityTypeSelect = document.getElementById("activity-type");
   if (activityTypeSelect) {
