@@ -55,7 +55,8 @@ const activeLearningStrategies = [
   "Retrieval practice",
   "Concept mapping",
   "Collaborative writing",
-  "Role-playing or simulation"
+  "Role-playing or simulation",
+  "Other"
 ];
 
 // One-sentence explanations for each strategy (courteous, instructor-facing).
@@ -163,26 +164,30 @@ function buildTemplate(data) {
     ? `This redesign is based on an existing assignment.${data.redesignStyle ? ` The instructor wants to ${data.redesignStyle.toLowerCase()}` : ""}${data.redesignEffort ? ` and the desired level of effort is ${data.redesignEffort.toLowerCase()}` : ""}.`
     : data.existingAssignment === "No"
       ? "This is not based on an existing assignment."
-      : "It is not specified whether this is based on an existing assignment.";
+      : "";
 
   const uploadSection = data.uploadDocuments === "Yes"
     ? `The instructor may upload supporting documents later, such as: ${data.documentTypes.length > 0 ? data.documentTypes.join(", ") : "related course files"}.`
     : data.uploadDocuments === "No"
       ? "No supporting documents are planned for upload at this time."
-      : "It is not specified whether supporting documents will be uploaded later.";
+      : "";
+
+  // Build context lines, excluding blank values
+  const contextLines = [];
+  if (data.discipline) contextLines.push(`Course discipline: ${data.discipline}`);
+  if (data.courseLevel) contextLines.push(`Course level: ${data.courseLevel}`);
+  if (data.classSize) contextLines.push(`Class size: ${data.classSize}`);
+  if (data.courseModality) contextLines.push(`Course modality: ${data.courseModality}`);
+  if (chosenActivityType) contextLines.push(`Assignment or activity type: ${chosenActivityType}`);
+  if (chosenStrategy) contextLines.push(`Chosen active learning strategy: ${chosenStrategy}`);
+  if (data.timeAvailable) contextLines.push(`Time available: ${data.timeAvailable}`);
+  if (data.learningGoals) contextLines.push(`Learning goals: ${data.learningGoals}`);
+  if (existingAssignmentSection) contextLines.push(existingAssignmentSection);
+  if (uploadSection) contextLines.push(uploadSection);
 
   return `You are an instructional design assistant. Use the course context below to create an active-learning redesign prompt that works with any large language model.
 
-Course discipline: ${data.discipline}
-Course level: ${data.courseLevel}
-Class size: ${data.classSize}
-Course modality: ${data.courseModality}
-Assignment or activity type: ${chosenActivityType}
-Chosen active learning strategy: ${chosenStrategy}
-Time available: ${data.timeAvailable}
-Learning goals: ${data.learningGoals}
-${existingAssignmentSection}
-${uploadSection}
+${contextLines.join("\n")}
 
 Please deliver the response in clear sections. For the chosen activity, provide:
 - A brief summary of the active-learning redesign
@@ -321,14 +326,18 @@ function getAbstractFormValues() {
 }
 
 function buildAbstractPrompt(data) {
+  // Build context lines, excluding blank values
+  const contextLines = [];
+  if (data.discipline) contextLines.push(`Course discipline: ${data.discipline}`);
+  if (data.courseLevel) contextLines.push(`Course level: ${data.courseLevel}`);
+  if (data.classSize) contextLines.push(`Class size: ${data.classSize}`);
+  if (data.courseModality) contextLines.push(`Course modality: ${data.courseModality}`);
+  if (data.timeAvailable) contextLines.push(`Typical time available: ${data.timeAvailable}`);
+  if (data.learningGoals) contextLines.push(`Typical learning goals: ${data.learningGoals}`);
+
   return `You are an experienced instructional design consultant. Given the course context below, suggest 4 concrete active-learning activities or strategies the instructor can implement quickly. For each suggestion, provide: a short title, a 2–3 sentence rationale tying it to the learning goals, student-facing instructions (brief), instructor facilitation notes (brief), and estimated time to implement. Be explicit about class size or modality considerations when relevant.
 
-Course discipline: ${data.discipline}
-Course level: ${data.courseLevel}
-Class size: ${data.classSize}
-Course modality: ${data.courseModality}
-Typical time available: ${data.timeAvailable}
-Typical learning goals: ${data.learningGoals}
+${contextLines.join("\n")}
 
 Return the suggestions as a numbered list and keep each item concise and copy-ready.`;
 }
