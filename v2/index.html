@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Active Learning Prompt Builder v2</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <span class="eyebrow">Version 2 prototype</span>
+      <h1>Start where you are. Every step toward more active learning improves engagement.</h1>
+      <p>Choose the path that fits your experience and goals, then build a prompt for any major LLM.</p>
+    </header>
+
+    <section id="landing-view" class="page-view">
+      <div class="pathways-grid">
+        <article class="path-card path-card--recommended">
+          <div class="card-top">
+            <span class="path-label">Recommended</span>
+            <h2>Scale of Change</h2>
+          </div>
+          <p>Start with the level of instructional change you want to make. The tool will suggest strategies that match your time, effort, and goals.</p>
+          <ul>
+            <li>Quick engagement</li>
+            <li>Guided interaction</li>
+            <li>Assignment redesign</li>
+          </ul>
+          <button id="start-staircase" class="primary-button">Start the staircase</button>
+        </article>
+
+        <article class="path-card">
+          <div class="card-top">
+            <span class="path-label">Strategy-first</span>
+            <h2>I Know My Strategy</h2>
+          </div>
+          <p>Choose the active learning strategy you already want to use and then tailor it to your course context.</p>
+          <div class="example-list">
+            <span>Peer Instruction</span>
+            <span>Think-Pair-Share</span>
+            <span>Team-Based Learning</span>
+            <span>Retrieval Practice</span>
+          </div>
+          <button id="start-strategy" class="secondary-button">Select a strategy</button>
+        </article>
+
+        <article class="path-card">
+          <div class="card-top">
+            <span class="path-label">Existing work</span>
+            <h2>I Have an Assignment</h2>
+          </div>
+          <p>Start from a current assignment, lab, or activity and make it more active without reinventing the whole course.</p>
+          <ul>
+            <li>Lecture</li>
+            <li>Homework</li>
+            <li>Project</li>
+            <li>Case study</li>
+          </ul>
+          <button id="start-assignment" class="secondary-button">Adapt an assignment</button>
+        </article>
+      </div>
+    </section>
+
+    <section id="staircase-view" class="page-view hidden">
+      <div class="section-header">
+        <button class="link-button" data-target="landing-view">← Back to start</button>
+        <div>
+          <p class="eyebrow">Scale of Change</p>
+          <h2>Pick the stair that matches your desired effort.</h2>
+        </div>
+      </div>
+      <div id="staircase-grid" class="staircase-grid"></div>
+      <div class="section-footer">
+        <p>Each stair shows the effort, scope, and example strategies for that level of change.</p>
+      </div>
+    </section>
+
+    <section id="strategy-view" class="page-view hidden">
+      <div class="section-header">
+        <button class="link-button" data-target="landing-view">← Back to start</button>
+        <div>
+          <p class="eyebrow">I Know My Strategy</p>
+          <h2>Choose your active learning strategy.</h2>
+        </div>
+      </div>
+      <div class="strategy-card">
+        <p>Select a strategy first, then answer a few course details to generate your prompt.</p>
+        <div class="strategy-grid" id="strategy-options"></div>
+      </div>
+    </section>
+
+    <section id="assignment-view" class="page-view hidden">
+      <div class="section-header">
+        <button class="link-button" data-target="landing-view">← Back to start</button>
+        <div>
+          <p class="eyebrow">I Have an Assignment</p>
+          <h2>Tell us what you want to improve.</h2>
+        </div>
+      </div>
+      <div class="assignment-panel">
+        <div class="control-group">
+          <label for="assignment-type">Assignment or activity type</label>
+          <select id="assignment-type">
+            <option value="">select option</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label for="redesign-level">Desired redesign level</label>
+          <select id="redesign-level">
+            <option value="">select option</option>
+          </select>
+        </div>
+      </div>
+      <div class="actions actions--center">
+        <button id="assignment-continue" class="primary-button" type="button">Continue</button>
+      </div>
+    </section>
+
+    <section id="context-view" class="page-view hidden">
+      <div class="section-header">
+        <button class="link-button" data-target="landing-view">← Start over</button>
+        <div>
+          <p class="eyebrow">Course context</p>
+          <h2>Share a few details so the prompt matches your teaching setting.</h2>
+        </div>
+      </div>
+
+      <div id="flow-summary" class="flow-summary"></div>
+
+      <form id="context-form" class="context-form">
+        <div class="field-grid">
+          <div class="control-group">
+            <label for="discipline">Discipline</label>
+            <input id="discipline" name="discipline" type="text" placeholder="e.g. Biology, Literature" />
+          </div>
+          <div class="control-group">
+            <label for="course-level">Course level</label>
+            <select id="course-level" name="courseLevel">
+              <option value="">select option</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label for="class-size">Class size</label>
+            <select id="class-size" name="classSize">
+              <option value="">select option</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label for="course-modality">Course modality</label>
+            <select id="course-modality" name="courseModality">
+              <option value="">select option</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label for="time-available">Time available</label>
+            <input id="time-available" name="timeAvailable" type="text" placeholder="e.g. 15 minutes, one class session" />
+          </div>
+          <div class="control-group">
+            <label for="learning-goals">Learning goals</label>
+            <textarea id="learning-goals" name="learningGoals" rows="3" placeholder="Describe the learning goals"></textarea>
+          </div>
+        </div>
+
+        <div class="docs-panel">
+          <p class="panel-label">Will you upload materials for the LLM to use?</p>
+          <div class="radio-group">
+            <label><input type="radio" name="uploadDocuments" value="Yes" /> Yes</label>
+            <label><input type="radio" name="uploadDocuments" value="No" checked /> No</label>
+          </div>
+          <div id="document-types" class="document-types hidden"></div>
+        </div>
+      </form>
+
+      <div class="actions">
+        <button id="generate-button" class="primary-button" type="button">Generate Prompt</button>
+      </div>
+    </section>
+
+    <section id="prompt-view" class="page-view hidden">
+      <div class="section-header">
+        <button class="link-button" data-target="context-view">← Edit details</button>
+        <div>
+          <p class="eyebrow">Prompt ready</p>
+          <h2>Copy your active learning prompt.</h2>
+        </div>
+      </div>
+      <textarea id="generated-prompt" class="prompt-output" readonly></textarea>
+      <div class="actions actions--space">
+        <button id="copy-button" class="secondary-button" type="button">Copy Prompt</button>
+        <button id="start-again" class="link-button" type="button">Back to start</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
