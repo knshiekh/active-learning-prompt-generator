@@ -194,18 +194,25 @@ function populateSelect(selectElement, items) {
 
 function renderStairs() {
   elements.staircaseGrid.innerHTML = "";
-  staircaseLevels.forEach(level => {
-    const card = document.createElement("article");
-    card.className = "stair-step";
+  staircaseLevels.forEach((level, index) => {
+    const card = document.createElement("button");
+    card.type = "button";
+    card.className = `stair-step stair-step--${level.id}`;
     card.innerHTML = `
-      <h3>${level.title}</h3>
-      <p>${level.description}</p>
-      <div class="stair-meta">
-        <span><strong>Effort:</strong> ${level.effort}</span>
-        <span><strong>Scope:</strong> ${level.scope}</span>
+      <div class="stair-top">
+        <span class="stair-number">${index + 1}</span>
+        <div>
+          <p class="stair-label">${level.effort}</p>
+          <h3>${level.title}</h3>
+        </div>
       </div>
-      <div class="example-list">
-        ${level.examples.map(example => `<span>${example}</span>`).join("")}
+      <p class="stair-scope">${level.scope}</p>
+      <p class="stair-description">${level.description}</p>
+      <div class="stair-examples">
+        <p>Examples</p>
+        <ul>
+          ${level.examples.map(example => `<li>${example}</li>`).join("")}
+        </ul>
       </div>
     `;
 
