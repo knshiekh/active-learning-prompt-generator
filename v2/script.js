@@ -4,55 +4,55 @@
 const staircaseLevels = [
   {
     id: "step1",
-    title: "Quick Engagement",
-    effort: "Very Low",
+    title: "Quick Start",
+    effort: "Start here",
     scope: "5–15 minutes",
-    description: "Add a small burst of interaction to increase participation and attention.",
+    description: "Add a brief activity to spark student thinking and participation.",
     examples: ["Think-Pair-Share", "Polling", "Retrieval Practice", "Minute Papers", "Muddiest Point"],
     strategies: ["Think-Pair-Share", "Polling", "Retrieval Practice", "Minute Papers", "Muddiest Point"]
   },
   {
     id: "step2",
-    title: "Guided Interaction",
-    effort: "Low",
+    title: "Build Interaction",
+    effort: "Bring students together",
     scope: "15–30 minutes",
-    description: "Add structured interaction that helps students think together.",
+    description: "Design a short, structured activity that promotes peer thinking.",
     examples: ["Peer Instruction", "Structured Discussion", "Compare-and-Contrast", "Short Case Analysis"],
     strategies: ["Peer Instruction", "Structured Discussion", "Compare-and-Contrast", "Short Case Analysis"]
   },
   {
     id: "step3",
     title: "Collaborative Practice",
-    effort: "Moderate",
+    effort: "Work together",
     scope: "One class activity",
-    description: "Students actively work together to apply concepts.",
+    description: "Students collaborate to apply ideas and practice skills.",
     examples: ["Small Group Problem Solving", "Concept Mapping", "Collaborative Writing", "Jigsaw Activities"],
     strategies: ["Small Group Problem Solving", "Concept Mapping", "Collaborative Writing", "Jigsaw Activities"]
   },
   {
     id: "step4",
     title: "Assignment Redesign",
-    effort: "Moderate to High",
+    effort: "Improve an assignment",
     scope: "Single assignment",
-    description: "Redesign an assignment to increase participation and knowledge construction.",
+    description: "Modify an existing task to increase engagement and learning.",
     examples: ["Peer Review", "Reflection and Revision", "Project Checkpoints", "Case-Based Redesign"],
     strategies: ["Peer Review", "Reflection and Revision", "Project Checkpoints", "Case-Based Redesign"]
   },
   {
     id: "step5",
     title: "Module Redesign",
-    effort: "High",
+    effort: "Sequence activities",
     scope: "Multiple class sessions",
-    description: "Redesign a sequence of activities to create deeper engagement.",
+    description: "Redesign a set of sessions to deepen engagement and practice.",
     examples: ["Problem-Based Learning", "Team-Based Learning", "Multi-Day Cases", "Scaffolded Projects"],
     strategies: ["Problem-Based Learning", "Team-Based Learning", "Multi-Day Cases", "Scaffolded Projects"]
   },
   {
     id: "step6",
-    title: "Course-Level Integration",
-    effort: "Highest",
+    title: "Course Integration",
+    effort: "Across the course",
     scope: "Whole course",
-    description: "Integrate active learning into the structure and rhythm of the course.",
+    description: "Embed active learning across the course for sustained impact.",
     examples: ["Recurring Active Learning Routines", "Portfolio-Based Structures", "Learning Communities", "Semester-Long Projects"],
     strategies: ["Recurring Active Learning Routines", "Portfolio-Based Structures", "Learning Communities", "Semester-Long Projects"]
   }
@@ -70,6 +70,19 @@ const directStrategies = [
   "Structured Discussion",
   "Problem-Based Learning"
 ];
+
+const strategyDescriptions = {
+  "Peer Instruction": "Use brief peer discussion to surface student reasoning before a whole-class explanation.",
+  "Think-Pair-Share": "Invite students to think independently, discuss with a partner, and share their ideas.",
+  "Team-Based Learning": "Organize students into teams that apply concepts through structured accountability and feedback.",
+  "Retrieval Practice": "Prompt students to recall and apply prior knowledge to strengthen long-term learning.",
+  "Concept Mapping": "Help students connect ideas visually so relationships and structures become clearer.",
+  "Case Study": "Ground the lesson in a realistic scenario that requires analysis and judgment.",
+  "Collaborative Writing": "Have students co-create written work that builds shared understanding and revision skills.",
+  "Reflection Activity": "Give students a short chance to examine their thinking, choices, and learning.",
+  "Structured Discussion": "Guide conversation with clear prompts, roles, and participation norms.",
+  "Problem-Based Learning": "Center the activity on a real problem that motivates inquiry and problem solving."
+};
 
 const assignmentTypes = [
   "Lecture",
@@ -129,6 +142,7 @@ const appState = {
   selectedLevel: null,
   selectedStrategy: null,
   recommendedStrategy: null,
+  previousView: null,
   assignmentType: null,
   redesignLevel: null,
   context: {
@@ -143,24 +157,30 @@ const appState = {
   chosenDocuments: []
 };
 
-const elements = {
-  landingView: document.getElementById("landing-view"),
-  staircaseView: document.getElementById("staircase-view"),
-  strategyView: document.getElementById("strategy-view"),
-  assignmentView: document.getElementById("assignment-view"),
-  contextView: document.getElementById("context-view"),
-  promptView: document.getElementById("prompt-view"),
-  staircaseGrid: document.getElementById("staircase-grid"),
-  strategyOptions: document.getElementById("strategy-options"),
-  assignmentType: document.getElementById("assignment-type"),
-  redesignLevel: document.getElementById("redesign-level"),
-  flowSummary: document.getElementById("flow-summary"),
-  courseLevel: document.getElementById("course-level"),
-  classSize: document.getElementById("class-size"),
-  courseModality: document.getElementById("course-modality"),
-  documentTypesContainer: document.getElementById("document-types"),
-  generatedPrompt: document.getElementById("generated-prompt")
-};
+let elements = {};
+
+function cacheElements() {
+  elements = {
+    landingView: document.getElementById("landing-view"),
+    staircaseView: document.getElementById("staircase-view"),
+    strategyView: document.getElementById("strategy-view"),
+    assignmentView: document.getElementById("assignment-view"),
+    contextView: document.getElementById("context-view"),
+    promptView: document.getElementById("prompt-view"),
+    staircaseGrid: document.getElementById("staircase-grid"),
+    strategyOptions: document.getElementById("strategy-options"),
+    assignmentType: document.getElementById("assignment-type"),
+    redesignLevel: document.getElementById("redesign-level"),
+    preferredStrategy: document.getElementById("preferred-strategy"),
+    preferredStrategyDescription: document.getElementById("preferred-strategy-description"),
+    flowSummary: document.getElementById("flow-summary"),
+    courseLevel: document.getElementById("course-level"),
+    classSize: document.getElementById("class-size"),
+    courseModality: document.getElementById("course-modality"),
+    documentTypesContainer: document.getElementById("document-types"),
+    generatedPrompt: document.getElementById("generated-prompt")
+  };
+}
 
 function showView(viewId) {
   document.querySelectorAll(".page-view").forEach(view => view.classList.add("hidden"));
@@ -170,9 +190,19 @@ function showView(viewId) {
   }
 }
 
+function goBack() {
+  if (appState.previousView) {
+    showView(appState.previousView);
+    return;
+  }
+  showView("landing-view");
+}
+
 function initialize() {
+  cacheElements();
   renderStairs();
   renderStrategyOptions();
+  populateStrategySelect(elements.preferredStrategy);
   populateSelect(elements.assignmentType, assignmentTypes);
   populateSelect(elements.redesignLevel, redesignLevels);
   populateSelect(elements.courseLevel, courseLevels);
@@ -184,6 +214,7 @@ function initialize() {
 }
 
 function populateSelect(selectElement, items) {
+  if (!selectElement) return;
   items.forEach(item => {
     const option = document.createElement("option");
     option.value = item;
@@ -192,7 +223,30 @@ function populateSelect(selectElement, items) {
   });
 }
 
+function populateStrategySelect(selectElement) {
+  if (!selectElement) return;
+  selectElement.innerHTML = "";
+
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "Select a strategy (optional)";
+  selectElement.appendChild(placeholder);
+
+  const recommend = document.createElement("option");
+  recommend.value = "Recommend one";
+  recommend.textContent = "Recommend one";
+  selectElement.appendChild(recommend);
+
+  directStrategies.forEach(strategy => {
+    const option = document.createElement("option");
+    option.value = strategy;
+    option.textContent = strategy;
+    selectElement.appendChild(option);
+  });
+}
+
 function renderStairs() {
+  if (!elements.staircaseGrid) return;
   elements.staircaseGrid.innerHTML = "";
   staircaseLevels.forEach((level, index) => {
     const card = document.createElement("button");
@@ -202,7 +256,6 @@ function renderStairs() {
       <div class="stair-top">
         <span class="stair-number">${index + 1}</span>
         <div>
-          <p class="stair-label">${level.effort}</p>
           <h3>${level.title}</h3>
         </div>
       </div>
@@ -216,25 +269,42 @@ function renderStairs() {
       </div>
     `;
 
+    card.setAttribute("data-stair-id", level.id);
     card.addEventListener("click", () => selectStair(level.id));
     elements.staircaseGrid.appendChild(card);
+  });
+
+  updateStairSelection();
+}
+
+function updateStairSelection() {
+  document.querySelectorAll(".stair-step").forEach(step => {
+    const stairId = step.getAttribute("data-stair-id");
+    const isSelected = Boolean(appState.selectedLevel && stairId === appState.selectedLevel.id);
+    step.classList.toggle("is-selected", isSelected);
   });
 }
 
 function renderStrategyOptions() {
+  if (!elements.strategyOptions) return;
   elements.strategyOptions.innerHTML = "";
 
   directStrategies.forEach(strategy => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "strategy-option";
-    button.textContent = strategy;
+    button.innerHTML = `
+      <span class="strategy-option__label">${strategy}</span>
+      <span class="strategy-option__description">${strategyDescriptions[strategy] || "Choose this strategy to tailor the prompt around it."}</span>
+    `;
+    button.setAttribute("title", strategyDescriptions[strategy] || strategy);
     button.addEventListener("click", () => selectDirectStrategy(strategy));
     elements.strategyOptions.appendChild(button);
   });
 }
 
 function renderDocumentOptions() {
+  if (!elements.documentTypesContainer) return;
   elements.documentTypesContainer.innerHTML = "";
   documentTypes.forEach(type => {
     const label = document.createElement("label");
@@ -250,22 +320,29 @@ function renderDocumentOptions() {
 }
 
 function installEventHandlers() {
-  document.getElementById("start-staircase").addEventListener("click", () => {
+  const startStair = document.getElementById("start-staircase");
+  if (startStair) startStair.addEventListener("click", () => {
     appState.path = "staircase";
+    appState.previousView = "landing-view";
     showView("staircase-view");
   });
 
-  document.getElementById("start-strategy").addEventListener("click", () => {
+  const startStrategy = document.getElementById("start-strategy");
+  if (startStrategy) startStrategy.addEventListener("click", () => {
     appState.path = "strategy";
+    appState.previousView = "landing-view";
     showView("strategy-view");
   });
 
-  document.getElementById("start-assignment").addEventListener("click", () => {
+  const startAssignment = document.getElementById("start-assignment");
+  if (startAssignment) startAssignment.addEventListener("click", () => {
     appState.path = "assignment";
+    appState.previousView = "landing-view";
     showView("assignment-view");
   });
 
-  document.querySelectorAll("[data-target]").forEach(element => {
+  const dataTargets = document.querySelectorAll("[data-target]");
+  dataTargets.forEach(element => {
     element.addEventListener("click", event => {
       const target = event.currentTarget.getAttribute("data-target");
       if (target === "landing-view") {
@@ -275,21 +352,44 @@ function installEventHandlers() {
     });
   });
 
-  document.getElementById("assignment-continue").addEventListener("click", () => {
-    appState.assignmentType = elements.assignmentType.value;
-    appState.redesignLevel = elements.redesignLevel.value;
+  const strategyGoBack = document.getElementById("strategy-go-back");
+  if (strategyGoBack) strategyGoBack.addEventListener("click", goBack);
+
+  const contextGoBack = document.getElementById("context-go-back");
+  if (contextGoBack) contextGoBack.addEventListener("click", goBack);
+
+  const assignmentContinue = document.getElementById("assignment-continue");
+  if (assignmentContinue) assignmentContinue.addEventListener("click", () => {
+    appState.assignmentType = elements.assignmentType ? elements.assignmentType.value : null;
+    appState.redesignLevel = elements.redesignLevel ? elements.redesignLevel.value : null;
 
     if (!appState.assignmentType || !appState.redesignLevel) {
       alert("Please choose an assignment type and a redesign level to continue.");
       return;
     }
 
+    appState.previousView = "assignment-view";
     renderContextView();
     showView("context-view");
   });
 
-  document.getElementById("generate-button").addEventListener("click", handleGenerate);
-  document.getElementById("copy-button").addEventListener("click", handleCopy);
+  const generateBtn = document.getElementById("generate-button");
+  if (generateBtn) generateBtn.addEventListener("click", handleGenerate);
+
+  const copyBtn = document.getElementById("copy-button");
+  if (copyBtn) copyBtn.addEventListener("click", handleCopy);
+
+  const startAgain = document.getElementById("start-again");
+  if (startAgain) startAgain.addEventListener("click", () => {
+    resetApp();
+    showView("landing-view");
+  });
+
+  const preferredStrategySelect = document.getElementById("preferred-strategy");
+  if (preferredStrategySelect) preferredStrategySelect.addEventListener("change", event => {
+    appState.selectedStrategy = event.target.value || null;
+    renderContextView();
+  });
 
   const uploadRadios = document.querySelectorAll("input[name='uploadDocuments']");
   uploadRadios.forEach(radio => {
@@ -303,12 +403,17 @@ function installEventHandlers() {
 function selectStair(stairId) {
   appState.selectedLevel = staircaseLevels.find(level => level.id === stairId) || null;
   appState.recommendedStrategy = "recommend";
+  appState.previousView = "staircase-view";
+  updateStairSelection();
   renderContextView();
   showView("context-view");
 }
 
 function selectDirectStrategy(strategy) {
   appState.selectedStrategy = strategy;
+  const preferredStrategy = document.getElementById("preferred-strategy");
+  if (preferredStrategy) preferredStrategy.value = strategy;
+  appState.previousView = "strategy-view";
   renderContextView();
   showView("context-view");
 }
@@ -317,14 +422,34 @@ function renderContextView() {
   elements.flowSummary.innerHTML = buildFlowSummary();
   updateFormFields();
   toggleDocumentTypes();
+  renderPreferredStrategyDescription();
+}
+
+function renderPreferredStrategyDescription() {
+  const container = elements.preferredStrategyDescription;
+  if (!container) return;
+
+  const strategy = appState.selectedStrategy;
+  if (!strategy || strategy === "Recommend one") {
+    container.classList.add("hidden");
+    container.textContent = "";
+    return;
+  }
+
+  const description = strategyDescriptions[strategy] || "Choose this strategy to tailor the prompt around it.";
+  container.textContent = description;
+  container.classList.remove("hidden");
 }
 
 function buildFlowSummary() {
   if (appState.path === "staircase" && appState.selectedLevel) {
+    const strategyLine = appState.selectedStrategy
+      ? `<p><strong>Selected strategy:</strong> ${appState.selectedStrategy}</p>`
+      : `<p>Select one strategy or ask the tool to recommend the best fit when you generate the prompt.</p>`;
     return `
       <p><strong>Chosen path:</strong> Scale of Change – ${appState.selectedLevel.title}</p>
-      <p><strong>Recommended strategies:</strong> ${appState.selectedLevel.strategies.join(", ")}</p>
-      <p>Select one strategy or ask the tool to recommend the best fit when you generate the prompt.</p>
+      <p><strong>Suggested strategies:</strong> ${appState.selectedLevel.strategies.join(", ")}</p>
+      ${strategyLine}
     `;
   }
 
@@ -356,6 +481,8 @@ function updateFormFields() {
   appState.context.courseModality = contextForm.courseModality.value;
   appState.context.timeAvailable = contextForm.timeAvailable.value;
   appState.context.learningGoals = contextForm.learningGoals.value;
+  appState.selectedStrategy = contextForm.preferredStrategy ? contextForm.preferredStrategy.value || null : appState.selectedStrategy;
+  renderPreferredStrategyDescription();
 
   const selectedDocuments = Array.from(document.querySelectorAll("input[name='documentType']:checked")).map(checkbox => checkbox.value);
   appState.chosenDocuments = selectedDocuments;
@@ -363,6 +490,7 @@ function updateFormFields() {
 
 function toggleDocumentTypes() {
   const container = elements.documentTypesContainer;
+  if (!container) return;
   if (appState.uploadDocuments === "Yes") {
     container.classList.remove("hidden");
   } else {
@@ -377,7 +505,8 @@ function toggleDocumentTypes() {
 function handleGenerate() {
   updateFormFields();
   const prompt = buildPrompt();
-  elements.generatedPrompt.value = prompt;
+  if (elements.generatedPrompt) elements.generatedPrompt.value = prompt;
+  appState.previousView = "context-view";
   showView("prompt-view");
 }
 
@@ -398,13 +527,19 @@ function buildPrompt() {
 
   if (appState.path === "staircase" && appState.selectedLevel) {
     lines.push(`- Selected change level: ${appState.selectedLevel.title} (${appState.selectedLevel.effort}, ${appState.selectedLevel.scope})`);
-    if (appState.recommendedStrategy === "recommend") {
+    if (appState.selectedStrategy && appState.selectedStrategy !== "Recommend one") {
+      lines.push(`- Preferred active learning strategy: ${appState.selectedStrategy}`);
+    } else {
       lines.push(`- Strategy request: Recommend the best active learning strategy from the chosen level.`);
     }
   }
 
-  if (appState.path === "strategy" && appState.selectedStrategy) {
+  if (appState.path === "strategy" && appState.selectedStrategy && appState.selectedStrategy !== "Recommend one") {
     lines.push(`- Chosen active learning strategy: ${appState.selectedStrategy}`);
+  }
+
+  if (appState.path === "assignment" && appState.selectedStrategy && appState.selectedStrategy !== "Recommend one") {
+    lines.push(`- Preferred active learning strategy: ${appState.selectedStrategy}`);
   }
 
   if (appState.path === "assignment") {
@@ -436,18 +571,24 @@ function buildPrompt() {
 }
 
 function handleCopy() {
-  const text = elements.generatedPrompt.value;
+  if (!elements.generatedPrompt) return;
+  const text = elements.generatedPrompt.value || "";
   if (!text.trim()) return;
 
-  navigator.clipboard.writeText(text).then(() => {
-    const button = document.getElementById("copy-button");
-    button.textContent = "Copied!";
-    setTimeout(() => (button.textContent = "Copy Prompt"), 1400);
-  });
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      const button = document.getElementById("copy-button");
+      if (button) {
+        button.textContent = "Copied!";
+        setTimeout(() => (button.textContent = "Copy Prompt"), 1400);
+      }
+    }).catch(() => {});
+  }
 }
 
 function resetApp() {
   appState.path = "landing";
+  appState.previousView = null;
   appState.selectedLevel = null;
   appState.selectedStrategy = null;
   appState.recommendedStrategy = null;
@@ -463,8 +604,14 @@ function resetApp() {
   };
   appState.uploadDocuments = "No";
   appState.chosenDocuments = [];
-  document.getElementById("context-form").reset();
-  document.querySelector("input[name='uploadDocuments'][value='No']").checked = true;
+  updateStairSelection();
+  const ctxForm = document.getElementById("context-form");
+  if (ctxForm) ctxForm.reset();
+  const preferredStrategySelect = document.getElementById("preferred-strategy");
+  if (preferredStrategySelect) preferredStrategySelect.value = "";
+  const noRadio = document.querySelector("input[name='uploadDocuments'][value='No']");
+  renderPreferredStrategyDescription();
+  if (noRadio) noRadio.checked = true;
   toggleDocumentTypes();
 }
 

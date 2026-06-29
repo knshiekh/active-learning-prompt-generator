@@ -8,7 +8,8 @@ const courseLevels = [
 
 const classSizes = [
   "Fewer than 25",
-  "25–75",
+  "25–50",
+  "51–75",
   "76–150",
   "More than 150"
 ];

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Active Learning Prompt Builder v2</title>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=4" />
 </head>
 <body>
   <main class="shell">
@@ -18,7 +18,6 @@
       <div class="pathways-grid">
         <article class="path-card path-card--recommended">
           <div class="card-top">
-            <span class="path-label">Recommended</span>
             <h2>Scale of Change</h2>
           </div>
           <p>Start with the level of instructional change you want to make. The tool will suggest strategies that match your time, effort, and goals.</p>
@@ -32,7 +31,6 @@
 
         <article class="path-card">
           <div class="card-top">
-            <span class="path-label">Strategy-first</span>
             <h2>I Know My Strategy</h2>
           </div>
           <p>Choose the active learning strategy you already want to use and then tailor it to your course context.</p>
@@ -47,7 +45,6 @@
 
         <article class="path-card">
           <div class="card-top">
-            <span class="path-label">Existing work</span>
             <h2>I Have an Assignment</h2>
           </div>
           <p>Start from a current assignment, lab, or activity and make it more active without reinventing the whole course.</p>
@@ -65,13 +62,10 @@
     <section id="staircase-view" class="page-view hidden">
       <div class="section-header">
         <button class="link-button" data-target="landing-view">← Back to start</button>
-        <div>
+        <div class="section-header-content">
           <p class="eyebrow">Scale of Change</p>
           <h2>Pick the stair that matches your desired effort.</h2>
         </div>
-      </div>
-      <div class="staircase-banner">
-        <span>More time, effort, and impact</span>
       </div>
       <div id="staircase-grid" class="staircase-grid"></div>
       <div class="section-footer">
@@ -81,7 +75,10 @@
 
     <section id="strategy-view" class="page-view hidden">
       <div class="section-header">
-        <button class="link-button" data-target="landing-view">← Back to start</button>
+        <div class="section-header-actions">
+          <button id="strategy-go-back" class="link-button" type="button">← Go back</button>
+          <button class="link-button" data-target="landing-view">← Back to start</button>
+        </div>
         <div>
           <p class="eyebrow">I Know My Strategy</p>
           <h2>Choose your active learning strategy.</h2>
@@ -122,7 +119,10 @@
 
     <section id="context-view" class="page-view hidden">
       <div class="section-header">
-        <button class="link-button" data-target="landing-view">← Start over</button>
+        <div class="section-header-actions">
+          <button id="context-go-back" class="link-button" type="button">← Go back</button>
+          <button class="link-button" data-target="landing-view">← Start over</button>
+        </div>
         <div>
           <p class="eyebrow">Course context</p>
           <h2>Share a few details so the prompt matches your teaching setting.</h2>
@@ -163,7 +163,15 @@
             <label for="learning-goals">Learning goals</label>
             <textarea id="learning-goals" name="learningGoals" rows="3" placeholder="Describe the learning goals"></textarea>
           </div>
+          <div class="control-group">
+            <label for="preferred-strategy">Preferred strategy</label>
+            <select id="preferred-strategy" name="preferredStrategy">
+              <option value="">Select a strategy (optional)</option>
+            </select>
+          </div>
         </div>
+
+        <div id="preferred-strategy-description" class="preferred-strategy-description hidden"></div>
 
         <div class="docs-panel">
           <p class="panel-label">Will you upload materials for the LLM to use?</p>
@@ -196,6 +204,6 @@
     </section>
   </main>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=2"></script>
 </body>
 </html>
