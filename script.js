@@ -178,7 +178,7 @@ function buildTemplate(data) {
   if (existingAssignmentSection) contextLines.push(existingAssignmentSection);
   if (uploadSection) contextLines.push(uploadSection);
 
-  return `You are an instructional design assistant. Use the course context below to create an active-learning redesign prompt that works with any large language model.
+  return `You are an experienced instructional design consultant. Given the course context below, suggest concrete active-learning activities or strategies the instructor can implement quickly. Be explicit about class size or modality considerations when relevant.
 
 ${contextLines.join("\n")}
 
