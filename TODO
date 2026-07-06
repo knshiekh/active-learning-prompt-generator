@@ -2,3 +2,5 @@ Change "Let LLM suggest strategies" to populate "Suggest potential active learni
 Check if the beginning of the prompt has properly changed to"
 "You are an experienced instructional design consultant. Given the course context below, suggest concrete active-learning activities or strategies the instructor can implement quickly. Be explicit about class size or modality considerations when relevant."
 Change the upload documents text to be more like "attached are..."
+Add in class activity as a general category under activity type
+Add course title to prompt builder 

@@ -40,6 +40,8 @@ const activityTypes = [
   "Reading activity",
   "Presentation",
   "Case study",
+  "In class activity",
+  "Group activity",
   "Other"
 ];
 
@@ -128,6 +130,7 @@ function getFormValues() {
   const formData = new FormData(form);
   return {
     discipline: formData.get("discipline") || "",
+    courseTitle: formData.get("courseTitle") || "",
     courseLevel: formData.get("courseLevel") || "",
     classSize: formData.get("classSize") || "",
     courseModality: formData.get("courseModality") || "",
@@ -152,6 +155,9 @@ function buildTemplate(data) {
   const chosenStrategy = data.strategy === "Other"
     ? data.strategyOther
     : data.strategy;
+  const strategyLabel = data.strategy === "Let the LLM suggest strategies"
+    ? "Suggest potential active learning strategies"
+    : chosenStrategy;
 
   const existingAssignmentSection = data.existingAssignment === "Yes"
     ? `This redesign is based on an existing assignment.${data.redesignStyle ? ` The instructor wants to ${data.redesignStyle.toLowerCase()}` : ""}.`
@@ -168,11 +174,12 @@ function buildTemplate(data) {
   // Build context lines, excluding blank values
   const contextLines = [];
   if (data.discipline) contextLines.push(`Course discipline: ${data.discipline}`);
+  if (data.courseTitle) contextLines.push(`Course title: ${data.courseTitle}`);
   if (data.courseLevel) contextLines.push(`Course level: ${data.courseLevel}`);
   if (data.classSize) contextLines.push(`Class size: ${data.classSize}`);
   if (data.courseModality) contextLines.push(`Course modality: ${data.courseModality}`);
   if (chosenActivityType) contextLines.push(`Assignment or activity type: ${chosenActivityType}`);
-  if (chosenStrategy) contextLines.push(`Chosen active learning strategy: ${chosenStrategy}`);
+  if (chosenStrategy) contextLines.push(`Active learning strategy: ${strategyLabel}`);
   if (data.timeAvailable) contextLines.push(`Time available: ${data.timeAvailable}`);
   if (data.learningGoals) contextLines.push(`Learning goals: ${data.learningGoals}`);
   if (existingAssignmentSection) contextLines.push(existingAssignmentSection);
